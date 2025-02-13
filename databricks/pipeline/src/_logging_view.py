@@ -4,6 +4,8 @@
 
 # COMMAND ----------
 
+import os
+
 log_file_path = "/dbfs/tmp/pipeline_logs.log"  # Caminho do arquivo de log
 
 # Verifique se o arquivo de log existe

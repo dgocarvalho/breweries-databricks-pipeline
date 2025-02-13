@@ -1,35 +1,30 @@
 # Databricks notebook source
 import logging
 import sys
+import os
 from logging.handlers import TimedRotatingFileHandler
 
 def setup_logging():
-
     log_file_path="/dbfs/tmp/pipeline_logs.log"
 
     # Criar o diretório, se não existir
     log_dir = os.path.dirname(log_file_path)
-    dbutils.fs.mkdirs(log_dir.replace("/dbfs", "dbfs:")) 
-    
-    # Remover handlers antigos para evitar duplicação
-    for handler in logging.root.handlers[:]:
-        logging.root.removeHandler(handler)
+    os.makedirs(log_dir, exist_ok=True)
 
     # Criar um logger
-    logger = logging.getLogger("pipeline_logs")
+    logger = logging.getLogger('GoldLayer')
     logger.setLevel(logging.INFO)
 
-    # Criar um handler que rotaciona o log diariamente
-    handler = TimedRotatingFileHandler(log_file_path, when="midnight", interval=1, backupCount=7)
-    handler.suffix = "%Y-%m-%d"  # Nomeia arquivos com a data (ex: pipeline_logs_2025-02-12.log)
+    # Criar um handler 
+    handler = logging.FileHandler(log_file_path)
+    handler.setLevel(logging.INFO)
 
     # Formato do log
-    formatter = logging.Formatter('%(asctime)s [%(levelname)s] - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     handler.setFormatter(formatter)
 
     # Adicionar handlers ao logger
     logger.addHandler(handler)
-    logger.addHandler(logging.StreamHandler(sys.stdout))  # Exibir logs no console
 
     return logger
 
